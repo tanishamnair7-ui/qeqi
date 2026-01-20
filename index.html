@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lagom Compatibility Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #8B2635 0%, #A63D4D 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .progress-container {
+            background: #f5f5f5;
+            padding: 20px 30px;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8B2635 0%, #FF6B6B 100%);
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .progress-text {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .intro-screen {
+            text-align: center;
+        }
+
+        .intro-screen h2 {
+            color: #8B2635;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .intro-screen p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2C2C2C;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #8B2635;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 800;
+            color: #8B2635;
+            display: block;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8B2635 0%, #A63D4D 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139,38,53,0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .question-text {
+            font-size: 18px;
+            color: #2C2C2C;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .scale-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .scale-option {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .scale-option:hover {
+            border-color: #8B2635;
+            background: #fff9f9;
+        }
+
+        .scale-option.selected {
+            border-color: #8B2635;
+            background: linear-gradient(135deg, #8B2635 0%, #A63D4D 100%);
+            color: white;
+        }
+
+        .scale-option input[type="radio"] {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            gap: 15px;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #666;
+            padding: 15px 30px;
+        }
+
+        .section-title {
+            color: #8B2635;
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .thank-you {
+            text-align: center;
+            padding: 60px 30px;
+        }
+
+        .thank-you h2 {
+            color: #8B2635;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .thank-you p {
+            color: #666;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            background: #10B981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Lagom Compatibility Assessment</h1>
+            <p>Evidence-based matching for real relationships</p>
+        </div>
+
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text">
+                <span id="progressText">Question 1 of 35</span>
+                <span id="sectionText">Getting Started</span>
+            </div>
+        </div>
+
+        <div class="content" id="content">
+            <div class="intro-screen" id="introScreen">
+                <h2>Discover Your Compatibility Profile</h2>
+                <p>This 5-7 minute assessment uses validated psychological instruments to understand what makes you tick in relationships.</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">35</span>
+                        <span class="stat-label">Questions</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">5</span>
+                        <span class="stat-label">Dimensions</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">5-7</span>
+                        <span class="stat-label">Minutes</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userName">First Name (Optional)</label>
+                    <input type="text" id="userName" placeholder="Enter your first name">
+                </div>
+
+                <div class="form-group">
+                    <label for="userEmail">Email (Optional - for results)</label>
+                    <input type="email" id="userEmail" placeholder="your.email@example.com">
+                </div>
+
+                <p style="margin-top: 30px; font-size: 14px; color: #999;">
+                    Your responses are anonymous and used only for research and matching.
+                </p>
+
+                <button class="btn btn-primary" onclick="startAssessment()">
+                    Start Assessment
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Assessment questions data
+        const questions = [
+            // VALUES (7)
+            {section: "Core Values", text: "It's important to me to help people I care about, even when it requires sacrifice.", dimension: "values"},
+            {section: "Core Values", text: "I value personal success and recognition from others.", dimension: "values"},
+            {section: "Core Values", text: "Trying new things and having varied experiences is important to me.", dimension: "values"},
+            {section: "Core Values", text: "I believe it's important to follow traditions and customs.", dimension: "values"},
+            {section: "Core Values", text: "Having control over my own life decisions is very important to me.", dimension: "values"},
+            {section: "Core Values", text: "Protecting the environment and nature is a priority for me.", dimension: "values"},
+            {section: "Core Values", text: "Financial security and stability are top priorities in my life.", dimension: "values"},
+            
+            // ATTACHMENT (7)
+            {section: "Attachment Style", text: "I worry that romantic partners won't care about me as much as I care about them.", dimension: "attachment"},
+            {section: "Attachment Style", text: "I prefer not to show a partner how I feel deep down.", dimension: "attachment"},
+            {section: "Attachment Style", text: "I worry about being abandoned in relationships.", dimension: "attachment"},
+            {section: "Attachment Style", text: "I feel comfortable sharing my private thoughts and feelings with a partner.", dimension: "attachment"},
+            {section: "Attachment Style", text: "I often worry that my partner doesn't really love me.", dimension: "attachment"},
+            {section: "Attachment Style", text: "I find it easy to depend on romantic partners.", dimension: "attachment"},
+            {section: "Attachment Style", text: "I need a lot of reassurance that I am loved by my partner.", dimension: "attachment"},
+            
+            // PERSONALITY (8)
+            {section: "Personality", text: "I see myself as outgoing and sociable.", dimension: "personality"},
+            {section: "Personality", text: "I see myself as someone who tends to be organized.", dimension: "personality"},
+            {section: "Personality", text: "I see myself as someone who is generally trusting.", dimension: "personality"},
+            {section: "Personality", text: "I see myself as someone who worries a lot.", dimension: "personality"},
+            {section: "Personality", text: "I see myself as someone who values artistic and creative experiences.", dimension: "personality"},
+            {section: "Personality", text: "I see myself as reserved and quiet.", dimension: "personality"},
+            {section: "Personality", text: "I see myself as someone who is sometimes rude to others.", dimension: "personality"},
+            {section: "Personality", text: "I see myself as someone who tends to be lazy.", dimension: "personality"},
+            
+            // MONEY (6)
+            {section: "Money Mindset", text: "I believe partners should be completely transparent about their finances.", dimension: "money"},
+            {section: "Money Mindset", text: "I prefer to save money rather than spend it on experiences.", dimension: "money"},
+            {section: "Money Mindset", text: "It's important that my partner and I have similar income levels.", dimension: "money"},
+            {section: "Money Mindset", text: "I'm comfortable talking about money early in a relationship.", dimension: "money"},
+            {section: "Money Mindset", text: "Financial security is more important to me than pursuing my passion.", dimension: "money"},
+            {section: "Money Mindset", text: "I believe it's important to keep some finances separate in a relationship.", dimension: "money"},
+            
+            // INTIMACY (6)
+            {section: "Intimacy & Connection", text: "I need to feel deep emotional connection before physical intimacy.", dimension: "intimacy"},
+            {section: "Intimacy & Connection", text: "Physical intimacy is an important part of getting to know someone.", dimension: "intimacy"},
+            {section: "Intimacy & Connection", text: "I'm comfortable being physically affectionate in public.", dimension: "intimacy"},
+            {section: "Intimacy & Connection", text: "I can enjoy physical intimacy without commitment.", dimension: "intimacy"},
+            {section: "Intimacy & Connection", text: "I prefer to take things slowly when it comes to physical intimacy.", dimension: "intimacy"},
+            {section: "Intimacy & Connection", text: "Regular physical intimacy is essential for me in a relationship.", dimension: "intimacy"}
+        ];
+
+        const scaleLabels = [
+            "Strongly Disagree",
+            "Disagree",
+            "Slightly Disagree",
+            "Neutral",
+            "Slightly Agree",
+            "Agree",
+            "Strongly Agree"
+        ];
+
+        let currentQuestion = 0;
+        let answers = [];
+        let userName = '';
+        let userEmail = '';
+        let startTime;
+
+        function startAssessment() {
+            userName = document.getElementById('userName').value || 'Anonymous';
+            userEmail = document.getElementById('userEmail').value || '';
+            startTime = new Date();
+            
+            document.getElementById('introScreen').style.display = 'none';
+            document.getElementById('progressContainer').style.display = 'block';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            document.getElementById('sectionText').textContent = q.section;
+
+            const content = document.getElementById('content');
+            content.innerHTML = `
+                <div class="section-title">${q.section}</div>
+                <div class="question">
+                    <div class="question-text">${q.text}</div>
+                    <div class="scale-container">
+                        ${scaleLabels.map((label, index) => `
+                            <div class="scale-option" onclick="selectOption(${index + 1})">
+                                <input type="radio" name="answer" value="${index + 1}" id="opt${index}">
+                                <label for="opt${index}" style="cursor: pointer; flex: 1;">${label}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    ${currentQuestion > 0 ? '<button class="btn btn-secondary" onclick="previousQuestion()">Previous</button>' : '<div></div>'}
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled style="flex: 1;">
+                        ${currentQuestion === questions.length - 1 ? 'Submit' : 'Next'}
+                    </button>
+                </div>
+            `;
+        }
+
+        function selectOption(value) {
+            document.querySelectorAll('.scale-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            const selected = document.querySelectorAll('.scale-option')[value - 1];
+            selected.classList.add('selected');
+            document.getElementById(`opt${value - 1}`).checked = true;
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function nextQuestion() {
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
+            if (!selectedOption) return;
+            
+            answers[currentQuestion] = parseInt(selectedOption.value);
+            currentQuestion++;
+
+            if (currentQuestion >= questions.length) {
+                submitAssessment();
+            } else {
+                showQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            currentQuestion--;
+            showQuestion();
+            if (answers[currentQuestion]) {
+                setTimeout(() => selectOption(answers[currentQuestion]), 100);
+            }
+        }
+
+        function submitAssessment() {
+            const endTime = new Date();
+            const timeSpent = Math.round((endTime - startTime) / 1000); // seconds
+
+            const results = {
+                timestamp: new Date().toISOString(),
+                name: userName,
+                email: userEmail,
+                timeSpent: timeSpent,
+                answers: answers,
+                questionCount: questions.length,
+                scores: calculateScores()
+            };
+
+            // Save to localStorage
+            saveToLocalStorage(results);
+
+            // Try to save to Google Sheets (if configured)
+            saveToGoogleSheets(results);
+
+            showThankYou();
+        }
+
+        function calculateScores() {
+            // Simple scoring for demo
+            const values = answers.slice(0, 7);
+            const attachment = answers.slice(7, 14);
+            const personality = answers.slice(14, 22);
+            const money = answers.slice(22, 28);
+            const intimacy = answers.slice(28, 35);
+
+            return {
+                values: average(values),
+                attachment: average(attachment),
+                personality: average(personality),
+                money: average(money),
+                intimacy: average(intimacy),
+                overall: average(answers)
+            };
+        }
+
+        function average(arr) {
+            return (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2);
+        }
+
+        function saveToLocalStorage(results) {
+            const allResults = JSON.parse(localStorage.getItem('lagomAssessments') || '[]');
+            allResults.push(results);
+            localStorage.setItem('lagomAssessments', JSON.stringify(allResults));
+        }
+
+        function saveToGoogleSheets(results) {
+            // CONFIGURE THIS: Replace with your Google Apps Script Web App URL
+            const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+            
+            if (GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_SCRIPT_URL_HERE') {
+                console.log('Google Sheets not configured. Data saved locally only.');
+                return;
+            }
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(results)
+            }).catch(error => {
+                console.log('Error saving to Google Sheets:', error);
+            });
+        }
+
+        function showThankYou() {
+            document.getElementById('progressContainer').style.display = 'none';
+            const content = document.getElementById('content');
+            content.innerHTML = `
+                <div class="thank-you">
+                    <div class="checkmark">✓</div>
+                    <h2>Thank You!</h2>
+                    <p>Your compatibility profile has been created.</p>
+                    <p style="margin-top: 20px;">We'll be in touch soon with your results and next steps.</p>
+                    <p style="margin-top: 30px; font-size: 14px; color: #999;">
+                        Assessment ID: ${Date.now()}
+                    </p>
+                </div>
+            `;
+        }
+
+        // Export data function (for admins)
+        function exportAllData() {
+            const data = localStorage.getItem('lagomAssessments');
+            if (!data) {
+                alert('No data to export');
+                return;
+            }
+
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `lagom-assessments-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // Admin: Access this in console to export data
+        console.log('Admin: To export all data, run: exportAllData()');
+    </script>
+</body>
+</html>
